@@ -1,3 +1,9 @@
 from django.contrib import admin
+from .models import Personnel
 
-# Register your models here.
+
+class PersonnelAdmin(admin.ModelAdmin):
+    list_display = ("id", "nom", "prenom", "email")
+
+
+admin.site.register(Personnel, PersonnelAdmin)
