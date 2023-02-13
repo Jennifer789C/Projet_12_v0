@@ -16,7 +16,10 @@ class Client(models.Model):
     statut = models.CharField(max_length=10, choices=Statut.choices)
     date_creation = models.DateField(auto_now_add=True)
     date_maj = models.DateField(auto_now=True)
-    vendeur = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL)
+    vendeur = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.societe
 
 
 class Contrat(models.Model):
@@ -38,4 +41,4 @@ class Evenement(models.Model):
     date_creation = models.DateField(auto_now_add=True)
     date_maj = models.DateField(auto_now=True)
     contrat = models.OneToOneField(Contrat, on_delete=models.CASCADE)
-    support = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL)
+    support = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
