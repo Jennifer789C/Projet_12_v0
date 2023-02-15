@@ -7,7 +7,7 @@ from .models import Personnel
 class CreationUserForm(forms.ModelForm):
     class Meta:
         model = Personnel
-        fields = ("email", "password")
+        fields = ("email", "password", "equipe")
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -25,13 +25,14 @@ class PersonnelAdmin(UserAdmin):
     fieldsets = (
         (None, {"fields": ("email", "password")}),
         ("Informations personnelles", {"fields": ("nom", "prenom", "tel", "port")}),
-        ("Autorisations", {"fields": ("equipe", "is_active", "is_staff")}),
+        ("Autorisations", {"fields": ("equipe", "is_active")}),
         ("Dates", {"fields": ("date_joined", "last_login")}),
+        ("Autres", {"fields": ("is_staff", "is_superuser", "groups", "user_permissions")})
     )
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
-            "fields": ("email", "password"),
+            "fields": ("email", "password", "equipe"),
         }),
     )
 

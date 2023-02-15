@@ -61,6 +61,7 @@ class Personnel(AbstractUser):
         super().save(*args, **kwargs)
         if self.equipe == self.GESTION:
             self.is_staff = True
+            super().save(*args, **kwargs)
             groupe = Group.objects.get(name="gestion")
             groupe.user_set.add(self)
         elif self.equipe == self.VENTE:
