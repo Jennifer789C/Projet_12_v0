@@ -15,10 +15,10 @@ class Personnel(AbstractUser):
 
     first_name = None
     last_name = None
-    nom = models.CharField(max_length=25)
-    prenom = models.CharField(max_length=25)
-    tel = models.CharField(max_length=20)
-    port = models.CharField(max_length=20)
+    nom = models.CharField(max_length=25, blank=True, null=True)
+    prenom = models.CharField(max_length=25, blank=True, null=True)
+    tel = models.CharField(max_length=20, blank=True, null=True)
+    port = models.CharField(max_length=20, blank=True, null=True)
     equipe = models.CharField(max_length=10, choices=CHOIX)
     email = models.EmailField(unique=True)
     username = None
@@ -26,7 +26,7 @@ class Personnel(AbstractUser):
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.prenom
+        return self.email
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
