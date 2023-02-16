@@ -86,3 +86,21 @@ Les autres utilisateurs ont accès aux données via l'API :
 
 Se connecter à Postman afin de parcourir les différents endpoints.  
 La documentation de cette API se trouve à l'adresse suivante :  
+
+### FAQ
+
+Comment vérifier quels utilisateurs font partie d'un groupe via le shell ?
+
+Lancer le shell :
+```bash
+python manage.py shell
+```
+Importer les modèles :
+```python
+from django.contrib.auth.models import Group
+from connexion.models import Personnel
+
+support_group = Group.objects.get(name='support')
+support_group.user_set.all()
+```
+```
