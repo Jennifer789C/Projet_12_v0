@@ -31,23 +31,13 @@ class UserManager(BaseUserManager):
 
 
 class Personnel(AbstractUser):
-    GESTION = "GESTION"
-    VENTE = "VENTE"
-    SUPPORT = "SUPPORT"
-
-    CHOIX = (
-        (GESTION, "Gestion"),
-        (VENTE, "Vente"),
-        (SUPPORT, "Support")
-    )
-
     first_name = None
     last_name = None
     nom = models.CharField(max_length=25)
     prenom = models.CharField(max_length=25)
     tel = models.CharField(max_length=20)
     port = models.CharField(max_length=20, blank=True, null=True)
-    equipe = models.CharField(max_length=10, choices=CHOIX)
+    groups = models.ForeignKey(to='auth.group', null=True, on_delete=models.SET_NULL, related_name="user_set")
     email = models.EmailField(unique=True)
     username = None
     USERNAME_FIELD = "email"
@@ -57,17 +47,16 @@ class Personnel(AbstractUser):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.groups.clear()
         groupe_gestion = Group.objects.get(name="gestion")
         groupe_vente = Group.objects.get(name="vente")
         groupe_support = Group.objects.get(name="support")
-        if self.equipe == self.GESTION:
+        if self.groups == groupe_gestion:
             self.is_staff = True
             groupe_gestion.user_set.add(self)
-        elif self.equipe == self.VENTE:
+        elif self.groups == groupe_vente:
             self.is_staff = False
-            self.groups.add(groupe_vente)
-        elif self.equipe == self.SUPPORT:
+            groupe_vente.user_set.add(self)
+        elif self.groups == groupe_support:
             self.is_staff = False
-            self.groups.add(groupe_support)
+            groupe_support.user_set.add(self)
         super().save(*args, **kwargs)
