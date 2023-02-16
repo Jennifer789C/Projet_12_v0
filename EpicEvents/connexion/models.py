@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractUser, Group
+from django.db.models.signals import m2m_changed
 
 
 class UserManager(BaseUserManager):
@@ -54,21 +55,19 @@ class Personnel(AbstractUser):
 
     objects = UserManager()
 
-    def __str__(self):
-        return self.prenom
-
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
+        self.groups.clear()
+        groupe_gestion = Group.objects.get(name="gestion")
+        groupe_vente = Group.objects.get(name="vente")
+        groupe_support = Group.objects.get(name="support")
         if self.equipe == self.GESTION:
             self.is_staff = True
-            groupe = Group.objects.get(name="gestion")
-            groupe.user_set.add(self)
+            groupe_gestion.user_set.add(self)
         elif self.equipe == self.VENTE:
             self.is_staff = False
-            groupe = Group.objects.get(name="vente")
-            groupe.user_set.add(self)
+            self.groups.add(groupe_vente)
         elif self.equipe == self.SUPPORT:
             self.is_staff = False
-            groupe = Group.objects.get(name="support")
-            groupe.user_set.add(self)
+            self.groups.add(groupe_support)
         super().save(*args, **kwargs)

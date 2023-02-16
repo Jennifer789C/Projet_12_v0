@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.models import Group
 from .models import Personnel
 
@@ -20,18 +20,25 @@ class CreationUserForm(forms.ModelForm):
 
 
 """
-class ModifUserForm(forms.ModelForm):
-    password = ReadOnlyPasswordHashField()
-
-    class Meta:
-        model = Personnel
-        fields = ("email", "password", "nom", "prenom", "tel", "port", "equipe", "is_active", "date_joined", "last_login")
-
+class ModifUserForm(UserChangeForm):
     def save(self, commit=True):
         user = super(ModifUserForm, self).save(commit=False)
+        equipe = self.cleaned_data["equipe"]
+        groupe_gestion = Group.objects.get(name="gestion")
+        groupe_vente = Group.objects.get(name="vente")
+        groupe_support = Group.objects.get(name="support")
+        if equipe == "GESTION":
+            Personnel.groups.through.objects.create(personnel=user, group=groupe_gestion)
+        elif equipe == "VENTE":
+            groupe_vente.user_set.add(user)
+        elif equipe == "SUPPORT":
+            groupe_support.user_set.add(user)
 
         if commit:
             user.save()
+            groupe_gestion.save()
+            groupe_vente.save()
+            groupe_support.save()
         return user
 """
 
@@ -45,9 +52,9 @@ class PersonnelAdmin(UserAdmin):
     fieldsets = (
         (None, {"fields": ("email", "password")}),
         ("Informations personnelles", {"fields": ("nom", "prenom", "tel", "port")}),
-        ("Autorisations", {"fields": ("equipe", "is_active")}),
+        ("Autorisations", {"fields": ("is_active", "groups")}),
         ("Dates", {"fields": ("date_joined", "last_login")}),
-        ("Autres", {"fields": ("is_staff", "is_superuser", "groups", "user_permissions")})
+        ("Autres", {"fields": ("is_staff", "is_superuser", "equipe", "user_permissions")})
     )
     add_fieldsets = (
         (None, {
