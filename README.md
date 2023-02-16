@@ -46,6 +46,29 @@ dans le fichier requirements.txt :
 pip install -r requirements.txt
 ```
 
+### 3. Configurer l'accès à la base de données
+
+Vérifier que PostgreSQL est bien installé sur votre machine.
+
+Puis créer la base de données :
+
+```bash
+createdb epic_events_local
+```
+
+Mettre à jour le fichier settings.py du projet.
+
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'epicevents_local',
+        'USER': 'your_postgres_username',
+        'PASSWORD': 'your_postgres_password',
+    }
+}
+```
+
 ### 3. Lancer le serveur
 
 ```bash
