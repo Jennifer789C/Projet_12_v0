@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractUser, Group
-from django.db.models.signals import m2m_changed
 
 
 class UserManager(BaseUserManager):
