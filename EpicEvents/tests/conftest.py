@@ -1,4 +1,5 @@
 import pytest
+from rest_framework.test import APIClient
 from api.models import Client, Contrat
 
 
@@ -15,3 +16,8 @@ def contrat(client):
     contrat = Contrat.objects.create(date_signature="2023-01-01", montant=500,
                                      echeance="2023-03-31", client=client)
     return contrat
+
+
+@pytest.fixture()
+def apiclient():
+    return APIClient()
