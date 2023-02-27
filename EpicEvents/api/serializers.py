@@ -15,6 +15,13 @@ class ClientDetailSerializer(ModelSerializer):
                   "port", "date_creation", "date_maj", "vendeur"]
 
 
+class ClientModifSerializer(ModelSerializer):
+    class Meta:
+        model = Client
+        fields = ["id", "societe", "statut", "nom", "prenom", "email", "tel",
+                  "port"]
+
+
 class ContratListeSerializer(ModelSerializer):
     class Meta:
         model = Contrat

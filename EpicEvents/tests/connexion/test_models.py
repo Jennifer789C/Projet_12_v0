@@ -1,18 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.test import Client
 import pytest
 
 Personnel = get_user_model()
-client = Client()
 
 
 @pytest.mark.django_db
-def test_creation_gestionnaire():
-    gestionnaire = Personnel.objects.create_user(email="test@mail.fr", password="test")
-    groupe_gestion = Group.objects.get(name="gestion")
-    groupe_gestion.user_set.add(gestionnaire)
-    gestionnaire.save()
+def test_creation_gestionnaire(gestionnaire):
     permissions = ["connexion.add_personnel", "connexion.view_personnel", "connexion.change_personnel", "connexion.delete_personnel",
                    "api.view_client", "api.change_client",
                    "api.view_contrat", "api.change_contrat",
@@ -25,11 +19,7 @@ def test_creation_gestionnaire():
 
 
 @pytest.mark.django_db
-def test_creation_vendeur():
-    vendeur = Personnel.objects.create_user(email="test@mail.fr", password="test")
-    groupe_vente = Group.objects.get(name="vente")
-    groupe_vente.user_set.add(vendeur)
-    vendeur.save()
+def test_creation_vendeur(vendeur):
     permissions = ["api.add_client", "api.view_client", "api.change_client",
                    "api.add_contrat", "api.view_contrat", "api.change_contrat",
                    "api.add_evenement", "api.view_evenement", "api.change_evenement"]
@@ -41,11 +31,7 @@ def test_creation_vendeur():
 
 
 @pytest.mark.django_db
-def test_creation_technicien():
-    technicien = Personnel.objects.create_user(email="test@mail.fr", password="test")
-    groupe_support = Group.objects.get(name="support")
-    groupe_support.user_set.add(technicien)
-    technicien.save()
+def test_creation_technicien(technicien):
     permissions = ["api.view_client", "api.view_evenement", "api.change_evenement"]
     assert technicien.email == "test@mail.fr"
     assert technicien.is_staff is False
