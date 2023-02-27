@@ -27,7 +27,7 @@ class Client(models.Model):
 class Contrat(models.Model):
     ouvert = models.BooleanField(default=True)
     signe = models.BooleanField(default=False)
-    date_signature = models.DateField()
+    date_signature = models.DateField(blank=True, null=True)
     montant = models.FloatField()
     echeance = models.DateField()
     date_creation = models.DateField(auto_now_add=True)

@@ -23,7 +23,7 @@ def test_list_client_avec_authentification(apiclient, token, request):
 
 @pytest.mark.django_db
 def test_retrieve_client_sans_authentification(apiclient, client):
-    reponse = apiclient.get("/client/1/")
+    reponse = apiclient.get(f"/client/{client.id}/")
     assert reponse.status_code == 401
 
 
@@ -69,17 +69,17 @@ def test_create_client(apiclient, token_access_vendeur):
 
 
 @pytest.mark.django_db
-def test_update_client_sans_authentification(apiclient):
-    reponse = apiclient.put("/client/1/")
+def test_update_client_sans_authentification(apiclient, client):
+    reponse = apiclient.put(f"/client/{client.id}/")
     assert reponse.status_code == 401
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("token", ["token_access_gestionnaire",
                                    "token_access_technicien"])
-def test_update_client_sans_permission(apiclient, token, request):
+def test_update_client_sans_permission(apiclient, client, token, request):
     token = request.getfixturevalue(token)
-    reponse = apiclient.put("/client/1/", HTTP_AUTHORIZATION="Bearer "+token)
+    reponse = apiclient.put(f"/client/{client.id}/", HTTP_AUTHORIZATION="Bearer "+token)
     assert reponse.status_code == 403
 
 
@@ -125,8 +125,8 @@ def test_update_client_mauvais_vendeur(apiclient, client):
 
 
 @pytest.mark.django_db
-def test_destroy_client_sans_authentification(apiclient):
-    reponse = apiclient.delete("/client/1/")
+def test_destroy_client_sans_authentification(apiclient, client):
+    reponse = apiclient.delete(f"/client/{client.id}/")
     assert reponse.status_code == 401
 
 
@@ -134,7 +134,7 @@ def test_destroy_client_sans_authentification(apiclient):
 @pytest.mark.parametrize("token", ["token_access_gestionnaire",
                                    "token_access_vendeur",
                                    "token_access_technicien"])
-def test_destroy_client(apiclient, token, request):
+def test_destroy_client(apiclient, client, token, request):
     token = request.getfixturevalue(token)
-    reponse = apiclient.delete("/client/1/", HTTP_AUTHORIZATION="Bearer "+token)
+    reponse = apiclient.delete(f"/client/{client.id}/", HTTP_AUTHORIZATION="Bearer "+token)
     assert reponse.status_code == 405 or 403

@@ -23,12 +23,33 @@ class ClientModifSerializer(ModelSerializer):
 
 
 class ContratListeSerializer(ModelSerializer):
+    parent_lookup_kwargs = {"client_pk": "client__pk"}
+
     class Meta:
         model = Contrat
         fields = ["id", "client", "ouvert", "signe"]
 
 
+class ContratCreationSerializer(ModelSerializer):
+    parent_lookup_kwargs = {"client_pk": "client__pk"}
+
+    class Meta:
+        model = Contrat
+        fields = ["id", "client", "montant", "echeance"]
+
+
+class ContratModifSerializer(ModelSerializer):
+    parent_lookup_kwargs = {"client_pk": "client__pk"}
+
+    class Meta:
+        model = Contrat
+        fields = ["id", "client", "ouvert", "signe", "date_signature",
+                  "montant", "echeance"]
+
+
 class ContratDetailSerializer(ModelSerializer):
+    parent_lookup_kwargs = {"client_pk": "client__pk"}
+
     class Meta:
         model = Contrat
         fields = ["id", "client", "ouvert", "signe", "date_signature",
