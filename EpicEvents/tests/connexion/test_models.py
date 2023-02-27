@@ -11,7 +11,7 @@ def test_creation_gestionnaire(gestionnaire):
                    "api.view_client", "api.change_client",
                    "api.view_contrat", "api.change_contrat",
                    "api.view_evenement", "api.change_evenement"]
-    assert gestionnaire.email == "test@mail.fr"
+    assert gestionnaire.email == "gestionnaire@mail.fr"
     assert gestionnaire.is_staff is True
     assert gestionnaire.is_superuser is False
     assert gestionnaire.has_perms(permissions) is True
@@ -23,7 +23,7 @@ def test_creation_vendeur(vendeur):
     permissions = ["api.add_client", "api.view_client", "api.change_client",
                    "api.add_contrat", "api.view_contrat", "api.change_contrat",
                    "api.add_evenement", "api.view_evenement", "api.change_evenement"]
-    assert vendeur.email == "test@mail.fr"
+    assert vendeur.email == "vendeur@mail.fr"
     assert vendeur.is_staff is False
     assert vendeur.has_perms(permissions) is True
     assert vendeur.has_module_perms("connexion") is False
@@ -33,7 +33,7 @@ def test_creation_vendeur(vendeur):
 @pytest.mark.django_db
 def test_creation_technicien(technicien):
     permissions = ["api.view_client", "api.view_evenement", "api.change_evenement"]
-    assert technicien.email == "test@mail.fr"
+    assert technicien.email == "technicien@mail.fr"
     assert technicien.is_staff is False
     assert technicien.has_perms(permissions) is True
     assert technicien.has_module_perms("connexion") is False

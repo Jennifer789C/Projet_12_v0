@@ -1,13 +1,6 @@
 from django.contrib.auth.models import Group
 from rest_framework.permissions import BasePermission
-
-
-class EstGestionnaire(BasePermission):
-    def has_permission(self, request, view):
-        groupe_gestion = Group.objects.get(name="gestion")
-        if request.user.groups == groupe_gestion:
-            return True
-        return False
+from api.models import Client
 
 
 class EstVendeur(BasePermission):
@@ -18,9 +11,9 @@ class EstVendeur(BasePermission):
         return False
 
 
-class EstTechnicien(BasePermission):
+class EstResponsableClient(BasePermission):
     def has_permission(self, request, view):
-        groupe_support = Group.objects.get(name="support")
-        if request.user.groups == groupe_support:
+        client = Client.objects.get(id=view.kwargs["pk"])
+        if request.user == client.vendeur:
             return True
         return False

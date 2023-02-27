@@ -59,3 +59,6 @@ class Personnel(AbstractUser):
             self.is_staff = False
             groupe_support.user_set.add(self)
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.email
