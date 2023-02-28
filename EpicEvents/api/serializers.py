@@ -66,12 +66,36 @@ class ContratDetailSerializer(ModelSerializer):
 
 
 class EvenementListeSerializer(ModelSerializer):
+    parent_lookup_kwargs = {"contrat_pk": "contrat__pk",
+                            "client_pk": "contrat__client__pk"}
+
     class Meta:
         model = Evenement
         fields = ["id", "ouvert", "date_evenement"]
 
 
+class EvenementCreationSerializer(ModelSerializer):
+    parent_lookup_kwargs = {"contrat_pk": "contrat__pk",
+                            "client_pk": "contrat__client__pk"}
+
+    class Meta:
+        model = Evenement
+        fields = ["id", "date_evenement", "participants", "notes"]
+
+
+class EvenementModifSerializer(ModelSerializer):
+    parent_lookup_kwargs = {"contrat_pk": "contrat__pk",
+                            "client_pk": "contrat__client__pk"}
+
+    class Meta:
+        model = Evenement
+        fields = ["id", "ouvert", "date_evenement", "participants", "notes"]
+
+
 class EvenementDetailSerializer(ModelSerializer):
+    parent_lookup_kwargs = {"contrat_pk": "contrat__pk",
+                            "client_pk": "contrat__client__pk"}
+
     class Meta:
         model = Evenement
         fields = ["id", "ouvert", "date_evenement", "participants", "notes",

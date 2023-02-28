@@ -4,7 +4,8 @@ from rest_framework.serializers import ValidationError
 from rest_framework.viewsets import ModelViewSet
 from . import serializers
 from .models import Client, Contrat, Evenement
-from connexion.permissions import EstVendeur, EstResponsableClient, EstResponsableClientContrat
+from connexion.permissions import EstVendeur, EstResponsableClient, \
+    EstResponsableClientContrat, EstResponsableEvenement
 
 Personnel = get_user_model()
 
@@ -76,4 +77,42 @@ class ContratViewset(ModelViewSet):
         contrat = Contrat.objects.get(id=self.kwargs["pk"])
         if contrat.ouvert is False:
             raise ValidationError("Votre contrat est fermé, vous ne pouvez plus le modifier.")
+        serializer.save()
+
+
+class EvenementViewset(ModelViewSet):
+    http_method_names = ["get", "post", "put"]
+
+    def get_queryset(self):
+        return Evenement.objects.filter(contrat=self.kwargs["contrat_pk"]).order_by("id")
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return serializers.EvenementListeSerializer
+        elif self.action == "create":
+            return serializers.EvenementCreationSerializer
+        elif self.action == "update":
+            return serializers.EvenementModifSerializer
+        else:
+            return serializers.EvenementDetailSerializer
+
+    def get_permissions(self):
+        if self.action == "list":
+            permission_classes = [IsAuthenticated]
+        elif self.action == "create":
+            permission_classes = [IsAuthenticated, EstVendeur, EstResponsableClientContrat]
+        elif self.action == "retrieve" or self.action == "update":
+            permission_classes = [IsAuthenticated, EstResponsableEvenement]
+        else:
+            permission_classes = [IsAdminUser]
+        return [permission() for permission in permission_classes]
+
+    def perform_create(self, serializer):
+        contrat = Contrat.objects.get(id=self.kwargs["contrat_pk"])
+        serializer.save(contrat=contrat)
+
+    def perform_update(self, serializer):
+        evenement = Evenement.objects.get(id=self.kwargs["pk"])
+        if evenement.ouvert is False:
+            raise ValidationError("Votre évènement est fermé, vous ne pouvez plus le modifier.")
         serializer.save()

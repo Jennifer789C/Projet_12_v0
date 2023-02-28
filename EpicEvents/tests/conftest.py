@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 import pytest
 from rest_framework.test import APIClient
-from api.models import Client, Contrat
+from api.models import Client, Contrat, Evenement
 
 Personnel = get_user_model()
 
@@ -80,3 +80,11 @@ def contrat(client):
     contrat = Contrat.objects.create(montant=500, echeance="2023-03-31",
                                      client=client)
     return contrat
+
+
+@pytest.fixture()
+def evenement(contrat, technicien):
+    evenement = Evenement.objects.create(date_evenement="2023-06-16",
+                                         participants=30, contrat=contrat,
+                                         support=technicien)
+    return evenement
