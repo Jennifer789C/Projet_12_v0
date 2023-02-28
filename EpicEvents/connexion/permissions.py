@@ -21,7 +21,7 @@ class EstResponsableClient(BasePermission):
 
 class EstResponsableClientContrat(BasePermission):
     def has_permission(self, request, view):
-        contrat = Contrat.objects.get(client=view.kwargs["client_pk"])
-        if request.user == contrat.client.vendeur:
+        client = Client.objects.get(id=view.kwargs["client_pk"])
+        if request.user == client.vendeur:
             return True
         return False

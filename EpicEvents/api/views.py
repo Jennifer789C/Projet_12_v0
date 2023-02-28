@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.serializers import ValidationError
 from rest_framework.viewsets import ModelViewSet
 from . import serializers
 from .models import Client, Contrat, Evenement
@@ -64,3 +65,15 @@ class ContratViewset(ModelViewSet):
         else:
             permission_classes = [IsAdminUser]
         return [permission() for permission in permission_classes]
+
+    def perform_create(self, serializer):
+        client = Client.objects.get(id=self.kwargs["client_pk"])
+        if client.statut == "Prospect":
+            raise ValidationError("Le client doit être au statut 'Client'.")
+        serializer.save(client=client)
+
+    def perform_update(self, serializer):
+        contrat = Contrat.objects.get(id=self.kwargs["pk"])
+        if contrat.ouvert is False:
+            raise ValidationError("Votre contrat est fermé, vous ne pouvez plus le modifier.")
+        serializer.save()

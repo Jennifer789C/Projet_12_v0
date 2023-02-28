@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, ValidationError
 from .models import Client, Contrat, Evenement
 
 
@@ -35,7 +35,7 @@ class ContratCreationSerializer(ModelSerializer):
 
     class Meta:
         model = Contrat
-        fields = ["id", "client", "montant", "echeance"]
+        fields = ["id", "montant", "echeance"]
 
 
 class ContratModifSerializer(ModelSerializer):
@@ -43,8 +43,17 @@ class ContratModifSerializer(ModelSerializer):
 
     class Meta:
         model = Contrat
-        fields = ["id", "client", "ouvert", "signe", "date_signature",
+        fields = ["id", "ouvert", "signe", "date_signature",
                   "montant", "echeance"]
+
+    def validate(self, data):
+        if data["signe"] is True:
+            if data["date_signature"] is None:
+                raise ValidationError("Votre contrat signé doit contenir une date de signature.")
+        else:
+            if data["date_signature"] is not None:
+                raise ValidationError("Votre contrat ne peut pas contenir de date de signature s'il n'est pas signé.")
+        return data
 
 
 class ContratDetailSerializer(ModelSerializer):
