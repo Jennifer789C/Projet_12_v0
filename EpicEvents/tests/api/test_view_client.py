@@ -137,4 +137,4 @@ def test_destroy_client_sans_authentification(apiclient, client):
 def test_destroy_client(apiclient, client, token, request):
     token = request.getfixturevalue(token)
     reponse = apiclient.delete(f"/client/{client.id}/", HTTP_AUTHORIZATION="Bearer "+token)
-    assert reponse.status_code == 405 or 403
+    assert reponse.status_code == 403

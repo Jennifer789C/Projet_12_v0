@@ -93,7 +93,7 @@ def test_create_evenement_sans_permission(apiclient, contrat, token, request):
     token = request.getfixturevalue(token)
     reponse = apiclient.post(f"/client/{contrat.client.id}/contrat/{contrat.id}/evenement/",
                              HTTP_AUTHORIZATION="Bearer "+token)
-    assert reponse.status_code == 403 or 405
+    assert reponse.status_code == 403
 
 
 @pytest.mark.django_db
@@ -231,4 +231,4 @@ def test_destroy_evenement_sans_permission(apiclient, evenement, token, request)
     token = request.getfixturevalue(token)
     reponse = apiclient.delete(f"/client/{evenement.contrat.client.id}/contrat/{evenement.contrat.id}/evenement/{evenement.id}/",
                                HTTP_AUTHORIZATION="Bearer "+token)
-    assert reponse.status_code == 403 or 405
+    assert reponse.status_code == 403

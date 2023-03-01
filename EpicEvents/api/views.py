@@ -1,10 +1,10 @@
 from django.contrib.auth import get_user_model
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.serializers import ValidationError
 from rest_framework.viewsets import ModelViewSet
 from . import serializers
 from .models import Client, Contrat, Evenement
-from connexion.permissions import EstVendeur, EstResponsableClient, \
+from connexion.permissions import EstSuperuser, EstVendeur, EstResponsableClient, \
     EstResponsableClientContrat, EstResponsableEvenement
 
 Personnel = get_user_model()
@@ -39,7 +39,7 @@ class ClientViewset(ModelViewSet):
         elif self.action == "update":
             permission_classes = [IsAuthenticated, EstVendeur, EstResponsableClient]
         else:
-            permission_classes = [IsAdminUser]
+            permission_classes = [EstSuperuser]
         return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
@@ -53,7 +53,14 @@ class ContratViewset(ModelViewSet):
     http_method_names = ["get", "post", "put"]
 
     def get_queryset(self):
-        return Contrat.objects.filter(client=self.kwargs["client_pk"]).order_by("id")
+        queryset = Contrat.objects.filter(client=self.kwargs["client_pk"]).order_by("id")
+        date = self.request.GET.get("date")
+        if date:
+            queryset = queryset.filter(date_signature=date)
+        montant = self.request.GET.get("montant")
+        if montant:
+            queryset = queryset.filter(montant=montant)
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -71,7 +78,7 @@ class ContratViewset(ModelViewSet):
         elif self.action == "create" or self.action == "update":
             permission_classes = [IsAuthenticated, EstVendeur, EstResponsableClientContrat]
         else:
-            permission_classes = [IsAdminUser]
+            permission_classes = [EstSuperuser]
         return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
@@ -111,7 +118,7 @@ class EvenementViewset(ModelViewSet):
         elif self.action == "retrieve" or self.action == "update":
             permission_classes = [IsAuthenticated, EstResponsableEvenement]
         else:
-            permission_classes = [IsAdminUser]
+            permission_classes = [EstSuperuser]
         return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
@@ -123,3 +130,33 @@ class EvenementViewset(ModelViewSet):
         if evenement.ouvert is False:
             raise ValidationError("Votre évènement est fermé, vous ne pouvez plus le modifier.")
         serializer.save()
+
+
+class ContratFiltreViewset(ModelViewSet):
+    http_method_names = ["get"]
+
+    def get_queryset(self):
+        queryset = Contrat.objects.all().order_by("id")
+        nom_client = self.request.GET.get("nom_client")
+        if nom_client:
+            queryset = queryset.filter(client__nom=nom_client)
+        email_client = self.request.GET.get("email_client")
+        if email_client:
+            queryset = queryset.filter(client__email=email_client)
+        date = self.request.GET.get("date")
+        if date:
+            queryset = queryset.filter(date_signature=date)
+        montant = self.request.GET.get("montant")
+        if montant:
+            queryset = queryset.filter(montant=montant)
+        return queryset
+
+    def get_serializer_class(self):
+        return serializers.ContratFiltreSerializer
+
+    def get_permissions(self):
+        if self.action == "list":
+            permission_classes = [IsAuthenticated, EstVendeur]
+        else:
+            permission_classes = [EstSuperuser]
+        return [permission() for permission in permission_classes]

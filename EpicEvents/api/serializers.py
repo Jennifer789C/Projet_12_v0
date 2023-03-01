@@ -100,3 +100,10 @@ class EvenementDetailSerializer(ModelSerializer):
         model = Evenement
         fields = ["id", "ouvert", "date_evenement", "participants", "notes",
                   "date_creation", "date_maj", "contrat", "support"]
+
+
+class ContratFiltreSerializer(ModelSerializer):
+    class Meta:
+        model = Contrat
+        fields = ["id", "client", "ouvert", "signe", "date_signature",
+                  "montant", "echeance", "date_creation", "date_maj"]

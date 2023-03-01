@@ -36,3 +36,11 @@ class EstResponsableEvenement(BasePermission):
         if request.user == client.vendeur:
             return True
         return False
+
+
+class EstSuperuser(BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        if user.is_superuser is True:
+            return True
+        return False
