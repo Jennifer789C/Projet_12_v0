@@ -14,7 +14,14 @@ class ClientViewset(ModelViewSet):
     http_method_names = ["get", "post", "put"]
 
     def get_queryset(self):
-        return Client.objects.all().order_by("id")
+        queryset = Client.objects.all().order_by("id")
+        nom = self.request.GET.get("nom")
+        if nom:
+            queryset = queryset.filter(nom=nom)
+        email = self.request.GET.get("email")
+        if email:
+            queryset = queryset.filter(email=email)
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "list":
