@@ -160,3 +160,30 @@ class ContratFiltreViewset(ModelViewSet):
         else:
             permission_classes = [EstSuperuser]
         return [permission() for permission in permission_classes]
+
+
+class EvenementFiltreViewset(ModelViewSet):
+    http_method_names = ["get"]
+
+    def get_queryset(self):
+        queryset = Evenement.objects.all().order_by("id")
+        nom_client = self.request.GET.get("nom_client")
+        if nom_client:
+            queryset = queryset.filter(contrat__client__nom=nom_client)
+        email_client = self.request.GET.get("email_client")
+        if email_client:
+            queryset = queryset.filter(contrat__client__email=email_client)
+        date = self.request.GET.get("date")
+        if date:
+            queryset = queryset.filter(date_evenement=date)
+        return queryset
+
+    def get_serializer_class(self):
+        return serializers.EvenementFiltreSerializer
+
+    def get_permissions(self):
+        if self.action == "list":
+            permission_classes = [IsAuthenticated]
+        else:
+            permission_classes = [EstSuperuser]
+        return [permission() for permission in permission_classes]

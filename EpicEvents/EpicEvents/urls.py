@@ -18,7 +18,7 @@ from django.urls import path, include
 from rest_framework_nested import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from api.views import ClientViewset, ContratViewset, EvenementViewset, \
-    ContratFiltreViewset
+    ContratFiltreViewset, EvenementFiltreViewset
 
 client_router = routers.SimpleRouter()
 client_router.register("client", ClientViewset, basename="client")
@@ -31,6 +31,7 @@ evenement_router.register("evenement", EvenementViewset, basename="evenement")
 
 router = routers.SimpleRouter()
 router.register("contrat", ContratFiltreViewset, basename="contrat_filtre")
+router.register("evenement", EvenementFiltreViewset, basename="evenement_filtre")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
