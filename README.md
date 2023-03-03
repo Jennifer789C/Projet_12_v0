@@ -46,7 +46,30 @@ dans le fichier requirements.txt :
 pip install -r requirements.txt
 ```
 
-### 3. Lancer le serveur
+### 3. Configurer la base de données PostgreSQL
+
+Installer PostgreSQL : https://www.postgresql.org/download/  
+Créer la base de données :
+```bash
+createdb EpicEvents_bdd
+```
+Mettre à jour les informations de votre utilisateur dans le fichier 
+settings.py :
+```bash
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'EpicEvents_bdd',
+        'USER': 'votre_utilisateur_postgresql',
+        'PASSWORD': 'votre_mot_de_pass_postgresql',
+    }
+}
+```
+Attention!! Si vous souhaitez lancer les tests avec pytest, votre 
+utilisateur doit avoir les autorisations de se connecter et créer des bases 
+de données.
+
+### 4. Lancer le serveur
 
 ```bash
 cd EpicEvents
@@ -55,11 +78,8 @@ Lancer le script python :
 ```bash
 python manage.py runserver
 ```
-
-### 4. Autres détails
-
 Les utilisateurs administrateurs ont accès à : http://localhost:8000/admin  
-Les autres utilisateurs ont accès aux données via l'API :
-
-Se connecter à Postman afin de parcourir les différents endpoints.  
+Les autres utilisateurs ont accès aux données via l'API.
+ 
 La documentation de cette API se trouve à l'adresse suivante :  
+https://documenter.getpostman.com/view/23176759/2s93CUKAzi
